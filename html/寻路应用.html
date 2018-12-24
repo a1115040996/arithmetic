@@ -8,9 +8,6 @@
 	<body>
 		<ul id="ul-table">
 		</ul>
-		
-		<div id="startFind">开始寻迹</div>
-		
 		<script src="../js/plugin/jquery-2.1.0.js" type="text/javascript" charset="utf-8"></script>
 		<script type="text/javascript">
 		/*************************************
@@ -32,6 +29,7 @@
 			var endLocation;// 终点
 			var openArr = [];// 开始点
 			var closeArr = [];// 结束点结果
+			var rocksArr = []; //障碍物
 			var canClose = true; // 是否已经找到路径
 			var mList = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 						 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -40,15 +38,15 @@
 						 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 						 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 						 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+						 0,0,0,0,0,0,0,0,0,3,0,0,0,0,3,3,0,0,0,0,
+						 0,0,0,1,0,0,0,0,0,3,0,0,0,0,3,3,0,0,0,0,
 						 0,0,0,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,
-						 0,0,0,1,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,
-						 0,0,0,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,
-						 0,0,0,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,
-						 0,0,0,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,
-						 0,0,0,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,
+						 0,0,0,3,3,3,0,0,0,3,0,0,0,0,0,0,0,0,0,0,
+						 0,0,0,0,0,3,0,0,0,3,0,0,0,0,0,0,0,0,0,0,
+						 0,0,0,0,3,3,0,0,0,3,0,0,0,0,0,0,0,0,0,0,
 						 0,0,0,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,
 						 0,0,0,0,0,0,0,0,0,3,0,3,3,3,0,0,0,0,0,0,
-						 0,0,0,0,0,0,0,0,0,3,0,3,2,0,0,0,0,0,0,0,
+						 0,0,0,0,0,0,0,0,0,3,0,3,0,0,0,0,0,0,0,0,
 						 0,0,0,3,3,3,3,3,3,3,0,3,3,3,0,0,0,0,0,0,
 						 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 						 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -68,6 +66,7 @@
 						//closeArr.push(_li)
 					}else if(list[i] === 3){ // 障碍
 						closeArr.push(_li)
+						rocksArr.push(_li)
 						_li.addClass('remora')
 					}else if(list[i] === 4){ // 移动点
 						_li.addClass('move')
@@ -163,7 +162,6 @@
 			
 		 	// 寻路
 		 	function findLocationLoop(){
-		 		
 	 			while(canClose){
 	 				findNextStepList()
 	 			}
@@ -185,12 +183,41 @@
 		 	}
 			
 			//findLocationLoop()
-			$("#startFind").click(function(){
+			/*$("#startFind").click(function(){
 				findLocationLoop()
 				var result = getRecallLocation()
 				result.forEach(function(v,i){
 					v.addClass('move')
 				})
+			})
+			*/
+			
+			
+			$("li").click(function(){
+				if(this.className!=='remora'){
+					$("li").removeClass('end').removeClass('move')
+					$(this).addClass('end')
+					endLocation = $("li[uid="+($(this).index()+1)+"]")
+					openArr = [startLocation]
+					closeArr = [...rocksArr]
+					canClose = true
+					findLocationLoop()
+					console.log(openArr)
+					var result = getRecallLocation().reverse()
+					result.push(endLocation)
+					console.log(result)
+					result.forEach(function(v,i){
+						var timer = setTimeout(function(){
+							$("li").removeClass('start')
+							v.addClass('start')
+							if(i>=result.length-1){
+								startLocation = v
+								$("li.end").removeClass('end')
+							}
+						},60*i)
+					})
+				}
+				
 			})
 			
 		</script>
