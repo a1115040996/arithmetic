@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<link rel="stylesheet" type="text/css" href="../css/way-finding.css"/>
+	</head>
+	<body>
+		<ul id="ul-table">
+		</ul>
+		
+		<div id="startFind">开始寻迹</div>
+		
+		<script src="../js/plugin/jquery-2.1.0.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+		/*************************************
+		 * 估价函数
+		 * f(n) = g(n) + h(n)
+		 * g(n) 起始点距离目标点的距离
+		 * h(n) 结束点距离目标点的距离
+		 * f(n) 估价   最小距离为最优解决方案
+		 * 
+		 * 
+		 * 创建矩阵
+		 * 1. 起点
+		 * 2. 终点
+		 * 3. 障碍
+		 * 4. 移动路径
+		**************************************/
+			var sizeGrid = 25;// 点的长宽
+			var startLocation;// 起点
+			var endLocation;// 终点
+			var openArr = [];// 开始点
+			var closeArr = [];// 结束点结果
+			var canClose = true;
+			var mList = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+						 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+						 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+						 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+						 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+						 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+						 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+						 0,0,0,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,
+						 0,0,0,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,
+						 0,0,0,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,
+						 0,0,0,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,
+						 0,0,0,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,
+						 0,0,0,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,
+						 0,0,0,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,
+						 0,0,0,0,0,0,0,0,0,3,0,3,3,3,0,0,0,0,0,0,
+						 0,0,0,0,0,0,1,0,0,3,0,3,2,3,0,0,0,0,0,0,
+						 0,0,0,3,3,3,3,3,3,3,0,3,0,3,0,0,0,0,0,0,
+						 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+						 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+						 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+			function createList(list){
+				$("#ul-table").width(sizeGrid*20+1+1)
+				var fragment = document.createDocumentFragment()
+				for (var i=0;len = list.length,i<len;i++) {
+					var _li = $('<li uid='+(i+1)+' x='+(i % 20 + 1)+' y='+(Math.floor(i / 20)+1)+'></li>').css({'width': sizeGrid,'height':sizeGrid})
+					if(list[i] === 1){ // 起始点
+						startLocation = _li
+						openArr.push(_li)
+						_li.addClass('start')
+					}else if(list[i] === 2){ // 结束点
+						endLocation = _li
+						_li.addClass('end')
+						//closeArr.push(_li)
+					}else if(list[i] === 3){ // 障碍
+						closeArr.push(_li)
+						_li.addClass('remora')
+					}else if(list[i] === 4){ // 移动点
+						_li.addClass('move')
+					}
+					fragment.appendChild(_li[0])
+				}
+				return fragment
+			}
+			$("#ul-table").append(createList(mList))
+			
+			
+			// 寻迹算法
+			function f(nodeGrid){
+				return g(nodeGrid) + h(nodeGrid)
+			}
+			
+			// 目标点 距离起始点的距离
+			function g(nodeGrid){
+				var a = nodeGrid.offset().left - startLocation.offset().left
+				var b = nodeGrid.offset().top - startLocation.offset().top
+				return Math.sqrt(a*a + b*b)
+			}
+			
+			// 目标点距离结束点的距离
+			function h(nodeGrid){
+				var a = nodeGrid.offset().left - endLocation.offset().left
+				var b = nodeGrid.offset().top - endLocation.offset().top
+				return Math.sqrt(a*a + b*b)
+			}
+			
+			
+			// 获取可能的落脚点
+			function findNextStepList(){
+				var result = [];// 存储结果集
+				var preStep = openArr.shift()
+				var startX = +preStep.attr('x')
+				var startY = +preStep.attr('y')
+				closeArr.push(preStep)
+				
+				getPossibleGrid(startX, startY)
+				// 获取可能的落脚点
+				function getPossibleGrid(x,y){
+					var _startX = (x-1) > 1 ? (x-1) : x;
+					var _startY = (y-1) > 1 ? (y-1) : y;
+					
+					var _endX = (x+1) <= 20 ? (x+1) : x;
+					var _endY = (y+1) <= 20 ? (y+1) : y;
+					
+					for(var i=_startX;i<=_endX;i++){
+						for (var j=_startY;j<=_endY;j++) {
+							if(!(i===startX&&j===startY)){
+								if(locationFilter(i,j)){
+									console.log()
+									$('li[x='+i+'][y='+j+']')[0].par = preStep
+									$('li[x='+i+'][y='+j+']')[0].distance = f($('li[x='+i+'][y='+j+']'))
+									openArr.push($('li[x='+i+'][y='+j+']'))
+									if(endLocation.attr('x')==i&&endLocation.attr('y')==j){
+										canClose = false
+									}
+								}
+							}
+						}
+					}
+					
+					
+					// 排序
+					openArr.sort(function(v1, v2){
+						return v1[0].distance - v2[0].distance
+					})
+					
+					
+					// 从数据中去除关闭的 和 已经设置父级指针的
+					function locationFilter(x,y){
+						for (var i=0;i<closeArr.length;i++) {
+							if(+closeArr[i].attr('x') === x && +closeArr[i].attr('y') === y){
+								return false
+							}
+						}
+						
+						
+						for (var i=0;i<openArr.length;i++) {
+							if(+openArr[i].attr('x') === x && +openArr[i].attr('y') === y){
+								return false
+							}
+						}
+						return true
+					}
+					
+				}
+				
+			}
+			
+			
+		 	// 寻路
+		 	function findLocationLoop(){
+	 			while(canClose){
+	 				findNextStepList()
+	 			}
+		 	}
+		 	
+		 	
+		 	
+		 	
+		 	function getRecallLocation(){
+		 		var result = []
+		 		
+		 		function getRecall(dom){
+		 			if($(dom).attr('x')==startLocation.attr('x')&&$(dom).attr('y')==startLocation.attr('y')){
+		 				return result
+		 			}else{
+		 				result.push(dom)
+		 				getRecall(dom[0].par)
+		 			}
+		 		}
+		 		getRecall(closeArr.pop())
+		 		return result
+		 	}
+			
+			//findLocationLoop()
+			$("#startFind").click(function(){
+				console.log(openArr)
+				findLocationLoop()
+				var result = getRecallLocation()
+				console.log(result)
+				result.forEach(function(v,i){
+					v.addClass('move')
+				})
+			})
+			
+		</script>
+	</body>
+</html>
