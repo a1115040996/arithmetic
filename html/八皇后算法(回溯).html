@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<link rel="stylesheet" type="text/css" href="../css/eightQueens.css"/>
+	</head>
+	<body>
+		
+		<ul id="box">
+		</ul>
+		
+		<script src="../js/plugin/jquery-2.1.0.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+		
+			var canStayLocationArr = []
+			var canNotLocationArr =[]
+			var count = 0;
+			var mList = []
+			createList() // 生成棋盘
+			function createList(){
+				var fragment = document.createDocumentFragment()
+				for (var i=0;i<64;i++) {
+					var tempLi = document.createElement("li")
+					tempLi.x = (Math.floor(i%8)+1)
+					tempLi.y = (Math.floor(i/8)+1)
+					tempLi.canstep = -1
+					fragment.appendChild(tempLi)
+				}
+				$("#box").append(fragment)
+				mList = document.querySelectorAll('li')
+			}
+			console.time()
+			var result = []
+			var oneTemp = []
+			setQueens(0)
+			console.log(count)
+			console.log(result)
+			console.timeEnd()
+			
+			
+			function setQueens(iQueens){
+				/*
+				 * iQueens 是第几个棋子
+				 * 
+				 * */
+				
+				// 走不到8的 不予计算 
+				if(iQueens==8){
+					console.log('done')
+					count++
+					result.push(oneTemp)
+					return;
+				}
+				for (var i=0;i<8;i++) {
+					if(mList[(iQueens*8+i)].canstep == -1){
+						var x = mList[(iQueens*8+i)].x 
+						var y = mList[(iQueens*8+i)].y
+						
+						for (var j=0;len = mList.length,j<len;j++) {
+							var nowLi = mList[j]
+							if((nowLi.canstep==-1) && (nowLi.x == x||nowLi.y == y||(nowLi.x + nowLi.y)==(x+y)||(nowLi.x - nowLi.y)==(x - y))){
+								//nowLi.innerHTML = iQueens
+								nowLi.canstep = iQueens
+								oneTemp.push({
+									x: x,
+									y: y
+								})
+							}
+						}
+						
+						setQueens(iQueens + 1)
+						
+						for (var k=0;len = mList.length,k<len;k++) {
+							if(mList[k].canstep == iQueens){
+								mList[k].canstep = -1
+								oneTemp  = []
+							}
+						}
+					}
+				}
+				
+			}
+			
+			
+		</script>
+	</body>
+</html>
