@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+	</head>
+	<body>
+		<script type="text/javascript">
+			var arr = [1,2,3,13,123,123,34,45,234,23,456,657,23,7876,24,1334,224,74548,7,345];
+			for (var i = 0;len = arr.length,i<len;i++) {
+				for (var j = 0;j<i;j++) {
+					if(arr[i]<arr[j]){
+						var temp = arr[i];
+						arr[i] = arr[j]
+						arr[j] = temp
+					}
+				}
+			}
+			console.log(arr)
+		</script>
+	</body>
+</html>

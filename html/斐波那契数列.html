@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+	</head>
+	<body>
+		<script type="text/javascript">
+			function fibon(n){
+				if(n<2){
+					return n;
+				}
+				return fibon(n-1)+fibon(n-2)
+			}
+			
+			console.time()
+			console.log(fibon(40))
+			console.timeEnd()
+		</script>
+	</body>
+</html>

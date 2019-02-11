@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+	</head>
+	<body>
+		<script type="text/javascript">
+			// 动态规划法 ， 暂存计算结果
+			function fibonDynamic(n){
+				var temp = [];
+				if(n===1|n===2){
+					return 1;
+				}else{
+					temp[1] = 1;
+					temp[2] = 2;
+					for (var i=3;i<=n;i++) {
+						temp[i] = temp[i-1]+temp[i-2];
+					}
+				}
+				return temp[n-1];
+			}
+			
+			console.log(fibonDynamic(40))
+		</script>
+	</body>
+</html>
