@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+	</head>
+	<body>
+		<script type="text/javascript">
+			// 选择排序 通过寻找最小值 来进行排序
+			var arr = [1,2,3,13,123,123,34,45,234,23,456,657,23,7876,24,1334,224,74548,7,345];
+			function selectSort(arr){
+				var temp,maxIndex;
+				for (var i = 0;len = arr.length,i<len; i++) {
+					maxIndex = i;// 默认第一个是最大值
+					for(var j=i+1;j<len;j++){// 前面已经排好的就不需要重复排了
+						if(arr[j]>arr[maxIndex]){
+							maxIndex = j
+						}
+					}
+					temp = arr[i]
+					arr[i] = arr[maxIndex]
+					arr[maxIndex] = temp
+				}
+				return arr;
+			}
+			
+			console.log(selectSort(arr))
+		</script>
+	</body>
+</html>
