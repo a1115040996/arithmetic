@@ -7,21 +7,20 @@
 	<body>
 		<script type="text/javascript">
 			// 类似于扑克牌的抓牌 排序操作
-			var arr = [1,2,3,13,123,123,34,45,234,23,456,657,23,7876,24,1334,224,74548,7,345];
-			function insertSort (arr) {
+			var arr = [1, 2, 3, 13, 123, 123, 34, 45, 234, 23, 456, 657, 23, 7876, 24, 1334, 224, 74548, 7, 345];
+			function insertSort(arr) {
 				var temp = 0;
-				for (var i=1;i<arr.length;i++) {
-					for (var j=i;j>0;j--) {
-						if(arr[j]<arr[j-1]){
+				for (var i = 1; len = arr.length, i < len; i++) {
+					for (var j = i; j < len; j++) {
+						if (arr[j] < arr[j - 1]) {
 							temp = arr[j]
-							arr[j] = arr[j-1] 
-							arr[j-1] = temp
+							arr[j] = arr[j - 1]
+							arr[j - 1] = temp
 						}
 					}
 				}
 				return arr
 			}
-			console.log(insertSort(arr))
-		</script>
+			console.log(insertSort(arr))</script>
 	</body>
 </html>
