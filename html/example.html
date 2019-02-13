@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+	</head>
+	<body>
+		<script type="text/javascript">
+			var arr = [25, 2, 3, 13, 123, 123, 34, 45, 234, 23, 456, 657, 23, 7876, 24, 1334, 224, 74548, 7, 345];
+			// 插入排序
+			function insertSort(arr){
+				var tempNum = 0;
+				for (var i=0;i<arr.length;i++) {
+					for (var j=i;j>0;j--) {
+						if(arr[j]>arr[j-1]){
+							tempNum = arr[j];
+							arr[j] = arr[j-1]
+							arr[j-1] = tempNum
+						}
+					}
+				}
+				return arr;
+			}
+			
+			console.log(insertSort(arr))
+		</script>
+	</body>
+</html>
