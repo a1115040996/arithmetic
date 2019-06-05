@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+	</head>
+
+	<body>
+		<script type="text/javascript">
+			var msg = {      
+					"id":"1",
+				    "name":"Lao Lao",
+				    "title":"general manager",
+				    "children":[{ 
+								"id": "2",
+					 			"name": "Bo Miao",
+					 			"title": "department manager" 
+								},
+								{ 
+								"id":"3",
+					 			"name":"Su Miao",
+					 			"title":"department manager",
+					          	"children":[{ 
+											"id":"4",
+						 					"name":"Tie Hua",
+						 					"title":"senior engineer" 
+											},
+											{ 
+											"id":"5",
+						 					"name":"Hei Hei",
+						 					"title":"senior engineer",
+						              		"children":[{ 
+														"id":"6",
+							 							"name":"Pang Pang",
+							 							"title":"engineer" 
+														},                  
+														{ 
+														"id":   "7",
+							 							"name":   "Xiang Xiang",
+							 							"title":   "UE engineer",
+														"children": [{
+																	"id": 100,
+																	"name": "张三",
+																	"title": "新加数据"
+																	}]
+														}]            
+											}]        
+								},
+								{ 
+								"id":   "8",
+					 			"name":   "Yu Jie",
+					 			"title":   "department manager" 
+								},
+								{ 
+								"id":   "9",
+					 			"name":   "Yu Li",
+					 			"title":   "department manager" 
+								},          
+								{ 
+								"id":   "10",
+					 			"name":   "Hong Miao",
+					 			"title":   "department manager" 
+								},
+								{ 
+								"id":   "11",
+					 			"name":   "Yu Wei",
+					 			"title":   "department manager" 
+								},
+								{ 
+								"id":   "12",
+					 			"name":   "Chun Miao",
+					 			"title":   "department manager" 
+								},
+								{ 
+								"id":   "13",
+					 			"name":   "Yu Tie",
+					 			"title":   "department manager" 
+								}]    
+					}
+			
+			
+			// 递归调用
+			function RecurveMsg(msg, parentIdx, deep) {
+				if(!msg['children']){
+					return msg;
+				} else {
+					deep++;
+					for (var i =0;i<msg['children'].length;i++) {
+						RecurveMsg(msg['children'][i], i, deep);
+						console.log(msg['children'][i], '父级下标值为'+parentIdx,'索引下标值为: '+ i, '深度为: '+deep)
+					}
+				}
+			}
+			RecurveMsg(msg, 0, 0)
+			console.log(msg)
+		</script>
+	</body>
+
+</html>
